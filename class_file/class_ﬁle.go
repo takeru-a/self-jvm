@@ -3,6 +3,7 @@ package class_file
 import (
 	"fmt"
 	"io"
+	"strings"
 
 	"github.com/takeru-a/self-jvm/support"
 )
@@ -101,4 +102,21 @@ func (c *ClassFile) Methods() []*MethodInfo {
 // メソッドの文字列表現を返す(名前とシグネチャ)
 func (m *MethodInfo) String() string {
 	return m.name + m.desc
+}
+
+// メソッドの引数の数を返す
+func (m *MethodInfo) NumArgs() int {
+	// ()の間の文字数をカウント
+	// メソッドのシグネチャの()の間には引数分英字が1文字あるため
+	return strings.Index(m.desc[1:],")")
+}
+
+// 名前とシグネチャからメソッドを特定し、情報を取得する
+func (c *ClassFile) FindMethod(name, desc string) *MethodInfo {
+	for _, method := range c.methods {
+		if method.name == name && method.desc == desc {
+			return method
+		}
+	}
+	return nil
 }
